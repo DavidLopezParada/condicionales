@@ -3,20 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/src/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Condicionales</title>
   </head>
   <body>
-   
-    <div class="carta">
-      <img src="https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/back.jpg" alt="Carta" id="back-card" />
-      <button id="boton-puntuacion">Pide carta</button>
+    <div class="titulo">
+      <h1>Juego de las siete media</h1>
     </div>
 
+   <div class="mesa">
+     <div class="carta">
+       <img src="https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/back.jpg" alt="Carta" id="back-card" />
+     </div>
+
      <div class="puntuacion">
-     <p class="mensaje-puntuacion">Puntuación:</p>
-     <h1 class="numero-puntuacion"></h1>  
+       <p class="mensaje-puntuacion">Puntuación:</p>
+       <h1 class="numero-puntuacion"></h1>  
+       <p class="mensaje-resultado"></p>
+     </div>
+   </div>
+    <div class="botones">
+      <button id="boton-puntuacion">Pide carta</button>
+      <button id="boton-plantarse">Plantarse</button>
+      <button id="nueva-partida">Nueva partida</button>
+      <button id="boton-habria-pasado" disabled>Saber que habria pasado</button>
     </div>
 
     <script type="module" src="/src/main.ts"></script>

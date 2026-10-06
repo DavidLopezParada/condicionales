@@ -4,9 +4,9 @@ const numeroPuntuacion = document.querySelector('.numero-puntuacion') as HTMLEle
 
 
 
-function muestraPuntuacion():void {
- if (numeroPuntuacion) {
-    numeroPuntuacion.textContent = puntuacion.toString().padStart(2, '0');
+function muestraPuntuacion(puntos: number):void {
+ if (numeroPuntuacion !== null && numeroPuntuacion !== undefined && numeroPuntuacion instanceof HTMLElement) {
+    numeroPuntuacion.textContent = puntos.toString().padStart(2, '0');
     } 
 }
 
@@ -23,121 +23,80 @@ const cartasota = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/ma
 const cartacaballo = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/11_caballo-copas.jpg"
 const cartarey = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/12_rey-copas.jpg"
 
+
+
 const botonPideCarta = document.querySelector<HTMLButtonElement>('#boton-puntuacion');
+  
+
+
+function generarNumeroAleatorio(): number {
+  return Math.floor(Math.random() * 10 + 1);
+}
+
+function ajustaValorCarta(numero: number): number {
+  return numero > 7 ? numero + 2 : numero;
+}
 
 function dameCarta(): number {
-  let numeroRandom : number = Math.floor(Math.random() * 10 + 1);
-  if (numeroRandom > 7) {
-    numeroRandom += 2;
-  }
-  return numeroRandom;
+  const numero = generarNumeroAleatorio();
+  return ajustaValorCarta(numero);
 }
 
 
 const cartaElement = document.querySelector<HTMLImageElement>('#back-card');
 
-function mostrarCarta(carta: number): void {
-    switch (carta) {
-      case 1:
-        if (cartaElement) {
-          cartaElement.src = carta1;
-        }
-        break;
-      case 2:
-        if (cartaElement) {
-          cartaElement.src = carta2;
-        }
-        break;
-      case 3:
-        if (cartaElement) {
-          cartaElement.src = carta3;
-        }
-        break;
-      case 4:
-        if (cartaElement) {
-          cartaElement.src = carta4;
-        }
-        break;
-      case 5:
-        if (cartaElement) {
-          cartaElement.src = carta5;
-        }
-        break;
 
-      case 6:
-        if (cartaElement) {
-          cartaElement.src = carta6;
-        }
-        break;
-
-      case 7:
-        if (cartaElement) {
-          cartaElement.src = carta7;
-        }
-        break;
-
-      case 10:
-        if (cartaElement) {
-          cartaElement.src = cartasota;
-        }
-        break;
-
-      case 11:
-        if (cartaElement) {
-          cartaElement.src = cartacaballo;
-        }
-        break;
-
-      case 12:
-        if (cartaElement) {
-          cartaElement.src = cartarey;
-        }
-        break;
-
-    }
-}
-
-
-
-function sumarPuntos(carta: number): void {
+function obtenCartaUrl(carta: number): string {
   switch (carta) {
     case 1:
-      puntuacion += 1;
-      break;
+      return carta1;
     case 2:
-      puntuacion += 2;
-      break;
+      return carta2;
     case 3:
-      puntuacion += 3;
-      break;
+      return carta3;
     case 4:
-      puntuacion += 4;
-      break;
+      return carta4;
     case 5:
-      puntuacion += 5;
-      break;
+      return carta5;
     case 6:
-      puntuacion += 6;
-      break;
+      return carta6;
     case 7:
-      puntuacion += 7;
-      break;
+      return carta7;
     case 10:
-      puntuacion += 0.5;
-      break;
+      return cartasota;
     case 11:
-      puntuacion += 0.5;
-      break;
+      return cartacaballo;
     case 12:
-      puntuacion += 0.5;
-      break;
+      return cartarey;
+    default:
+      return "";
+  }
+}
+
+function pintaCartaEnHtml(url: string): void {
+  if (cartaElement !== null && cartaElement !== undefined && cartaElement instanceof HTMLImageElement) {
+    cartaElement.src = url;
   }
 }
 
 
+function mostrarCarta(carta: number): void {
+  pintaCartaEnHtml(obtenCartaUrl(carta));
+}
+
+
+function calculaPuntosCarta(carta: number): number {
+  return carta > 7 ? 0.5 : carta;
+}
+
+function sumaPuntos(actual: number, nuevos: number): number {
+  return actual + nuevos;
+}
+
 function actualizarPuntuacion(carta: number): void {
-  sumarPuntos(carta);
-  muestraPuntuacion();
+  const puntosCarta = calculaPuntosCarta(carta);
+  puntuacion = sumaPuntos(puntuacion, puntosCarta);
+  muestraPuntuacion(puntuacion);
 
   const mensaje = HasSuperadoPuntuacionMaxima(puntuacion);
   muestraMensaje(mensaje);
@@ -145,7 +104,7 @@ function actualizarPuntuacion(carta: number): void {
 }
 
 
-if (botonPideCarta) {
+if (botonPideCarta !== null && botonPideCarta !== undefined && botonPideCarta instanceof HTMLButtonElement) {
   botonPideCarta.addEventListener('click', () => {const carta = dameCarta(); mostrarCarta(carta); actualizarPuntuacion(carta);});
 }
 
@@ -171,7 +130,7 @@ const gestionargameover : (puntuacion: number) => void = (puntuacion) => {
 const mensajeElement = document.querySelector('.mensaje-resultado') as HTMLElement;
 
 function muestraMensaje(mensaje: string): void {
-  if (mensajeElement) {
+  if (mensajeElement !== null && mensajeElement !== undefined && mensajeElement instanceof HTMLElement) {
     mensajeElement.textContent = mensaje;
   }
 }
@@ -199,7 +158,7 @@ function mensajeEstado(puntuacion: number): Estados {
 
 
 
-if (botonPlantarse) {
+if (botonPlantarse !== null && botonPlantarse !== undefined && botonPlantarse instanceof HTMLButtonElement) {
   botonPlantarse.addEventListener('click', () => {
     const estado = mensajeEstado(puntuacion);
     muestraMensaje(estado);
@@ -211,10 +170,10 @@ if (botonPlantarse) {
 }
 
 const desactivarBotones = (): void => {
- if (botonPlantarse) {
+ if (botonPlantarse !== null && botonPlantarse !== undefined && botonPlantarse instanceof HTMLButtonElement) {
     botonPlantarse.disabled = true;
   }
-  if (botonPideCarta) {
+  if (botonPideCarta !== null && botonPideCarta !== undefined && botonPideCarta instanceof HTMLButtonElement) {
     botonPideCarta.disabled = true;
   }
 } 
@@ -223,30 +182,30 @@ const botonNuevaPartida = document.querySelector<HTMLButtonElement>('#nueva-part
 
 function reiniciarJuego(): void {
   puntuacion = 0;
-  muestraPuntuacion();
+  muestraPuntuacion(puntuacion);
   muestraMensaje("");
 
- if (cartaElement) {
+ if (cartaElement !== null && cartaElement !== undefined && cartaElement instanceof HTMLImageElement) {
     cartaElement.src = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/back.jpg";
   }
 
- if (botonHabriaPasado) {
+ if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabriaPasado instanceof HTMLButtonElement) {
   botonHabriaPasado.disabled = true;
 }
 }
 
 const activarBotones = (): void => {
-  if (botonPlantarse) {
+  if (botonPlantarse !== null && botonPlantarse !== undefined && botonPlantarse instanceof HTMLButtonElement) {
     botonPlantarse.disabled = false;
   }
-  if (botonPideCarta) {
+  if (botonPideCarta !== null && botonPideCarta !== undefined && botonPideCarta instanceof HTMLButtonElement) {
     botonPideCarta.disabled = false;
   }
 }
 
 
 
-if (botonNuevaPartida) {
+if (botonNuevaPartida !== null && botonNuevaPartida !== undefined && botonNuevaPartida instanceof HTMLButtonElement) {
   botonNuevaPartida.addEventListener('click', () => {
     reiniciarJuego();
     activarBotones();
@@ -254,27 +213,13 @@ if (botonNuevaPartida) {
 }
 
 
-function valorPuntos(carta: number): number {
-  switch (carta) {
-    case 1: return 1;
-    case 2: return 2;
-    case 3: return 3;
-    case 4: return 4;
-    case 5: return 5;
-    case 6: return 6;
-    case 7: return 7;
-    case 10: return 0.5;
-    case 11: return 0.5;
-    case 12: return 0.5;
-    default: return 0;
-  }
-}
+
 
 const botonHabriaPasado = document.querySelector<HTMLButtonElement>('#boton-habria-pasado');
 
 function simulaQueHabriaPasado(): string {
   const cartaSimulada = dameCarta();
-  const puntosSimulados = puntuacion + valorPuntos(cartaSimulada);
+  const puntosSimulados = puntuacion + calculaPuntosCarta(cartaSimulada);
 
   if (puntosSimulados > PUNTUACION_MAXIMA) {
     return `Habrías sacado un ${cartaSimulada} y te habrías pasado con ${puntosSimulados} puntos.`;
@@ -283,7 +228,7 @@ function simulaQueHabriaPasado(): string {
   }
 }
 
-if (botonHabriaPasado) {
+if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabriaPasado instanceof HTMLButtonElement) {
   botonHabriaPasado.addEventListener('click', () => {
     const resultado = simulaQueHabriaPasado();
     muestraMensaje(resultado);
@@ -294,8 +239,8 @@ if (botonHabriaPasado) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  muestraPuntuacion();
-  if (botonHabriaPasado) {
+  muestraPuntuacion(puntuacion);
+  if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabriaPasado instanceof HTMLButtonElement) {
     botonHabriaPasado.disabled = true;
   }
 });

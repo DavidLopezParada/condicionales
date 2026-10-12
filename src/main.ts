@@ -22,6 +22,7 @@ const carta7 = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/
 const cartasota = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/10_sota-copas.jpg"
 const cartacaballo = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/11_caballo-copas.jpg"
 const cartarey = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/copas/12_rey-copas.jpg"
+const cartaBocaAbajo = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/back.jpg"
 
 
 
@@ -98,9 +99,9 @@ function actualizarPuntuacion(carta: number): void {
   puntuacion = sumaPuntos(puntuacion, puntosCarta);
   muestraPuntuacion(puntuacion);
 
-  const mensaje = HasSuperadoPuntuacionMaxima(puntuacion);
+  const mensaje = obtenMensajeFinPartida(puntuacion);
   muestraMensaje(mensaje);
-  gestionargameover(puntuacion);
+  gestionarFinPartida(puntuacion);
 }
 
 
@@ -112,17 +113,27 @@ if (botonPideCarta !== null && botonPideCarta !== undefined && botonPideCarta in
 
 const PUNTUACION_MAXIMA : number = 7.5;
 
-const HasSuperadoPuntuacionMaxima = (puntuacion: number): string => {
-  let mensajePuntuacion = "";
-  if (puntuacion > PUNTUACION_MAXIMA) {
-        mensajePuntuacion = "GAME OVER";
-    }
-    return mensajePuntuacion;
+const haSuperadoPuntuacionMaxima = (puntos: number): boolean => puntos > PUNTUACION_MAXIMA;
+
+function cambiarEstadoBoton(boton: HTMLButtonElement | null, deshabilitado: boolean): void {
+  if (boton) {
+    boton.disabled = deshabilitado;
+  }
+}
+
+const obtenMensajeFinPartida = (puntuacion: number): string => {
+  if (haSuperadoPuntuacionMaxima(puntuacion)) {
+    return "GAME OVER";
+  }
+  if (puntuacion === PUNTUACION_MAXIMA) {
+    return mensajeEstado(puntuacion);
+  }
+  return "";
 };
 
 
-const gestionargameover : (puntuacion: number) => void = (puntuacion) => {
-  if (puntuacion > PUNTUACION_MAXIMA) {
+const gestionarFinPartida : (puntuacion: number) => void = (puntuacion) => {
+  if (puntuacion >= PUNTUACION_MAXIMA) {
     desactivarBotones();
   }
 }
@@ -149,7 +160,7 @@ function mensajeEstado(puntuacion: number): Estados {
     return "Has sido muy conservador";
   } else if (puntuacion < 6) {
     return "Te ha entrado el canguelo eh?";
-  } else if (puntuacion < 7.5) {
+  } else if (puntuacion < PUNTUACION_MAXIMA) {
     return "Casi casi...";
   } else {
     return "¡ Lo has clavado! ¡Enhorabuena!";
@@ -163,20 +174,14 @@ if (botonPlantarse !== null && botonPlantarse !== undefined && botonPlantarse in
     const estado = mensajeEstado(puntuacion);
     muestraMensaje(estado);
     desactivarBotones();
-    if (botonHabriaPasado) {
-  botonHabriaPasado.disabled = false;
-}
+    cambiarEstadoBoton(botonHabriaPasado, false);
   });
 }
 
 const desactivarBotones = (): void => {
- if (botonPlantarse !== null && botonPlantarse !== undefined && botonPlantarse instanceof HTMLButtonElement) {
-    botonPlantarse.disabled = true;
-  }
-  if (botonPideCarta !== null && botonPideCarta !== undefined && botonPideCarta instanceof HTMLButtonElement) {
-    botonPideCarta.disabled = true;
-  }
-} 
+  cambiarEstadoBoton(botonPlantarse, true);
+  cambiarEstadoBoton(botonPideCarta, true);
+}
 
 const botonNuevaPartida = document.querySelector<HTMLButtonElement>('#nueva-partida');
 
@@ -185,22 +190,13 @@ function reiniciarJuego(): void {
   muestraPuntuacion(puntuacion);
   muestraMensaje("");
 
- if (cartaElement !== null && cartaElement !== undefined && cartaElement instanceof HTMLImageElement) {
-    cartaElement.src = "https://raw.githubusercontent.com/Lemoncode/fotos-ejemplos/main/cartas/back.jpg";
-  }
-
- if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabriaPasado instanceof HTMLButtonElement) {
-  botonHabriaPasado.disabled = true;
-}
+  pintaCartaEnHtml(cartaBocaAbajo);
+  cambiarEstadoBoton(botonHabriaPasado, true);
 }
 
 const activarBotones = (): void => {
-  if (botonPlantarse !== null && botonPlantarse !== undefined && botonPlantarse instanceof HTMLButtonElement) {
-    botonPlantarse.disabled = false;
-  }
-  if (botonPideCarta !== null && botonPideCarta !== undefined && botonPideCarta instanceof HTMLButtonElement) {
-    botonPideCarta.disabled = false;
-  }
+  cambiarEstadoBoton(botonPlantarse, false);
+  cambiarEstadoBoton(botonPideCarta, false);
 }
 
 
@@ -219,20 +215,19 @@ const botonHabriaPasado = document.querySelector<HTMLButtonElement>('#boton-habr
 
 function simulaQueHabriaPasado(): string {
   const cartaSimulada = dameCarta();
-  const puntosSimulados = puntuacion + calculaPuntosCarta(cartaSimulada);
+  const puntosSimulados = sumaPuntos(puntuacion, calculaPuntosCarta(cartaSimulada));
+  const veredicto = haSuperadoPuntuacionMaxima(puntosSimulados)
+    ? "te habrías pasado con"
+    : "te habrías quedado en";
 
-  if (puntosSimulados > PUNTUACION_MAXIMA) {
-    return `Habrías sacado un ${cartaSimulada} y te habrías pasado con ${puntosSimulados} puntos.`;
-  } else {
-    return `Habrías sacado un ${cartaSimulada} y te habrías quedado en ${puntosSimulados} puntos.`;
-  }
+  return `Habrías sacado un ${cartaSimulada} y ${veredicto} ${puntosSimulados} puntos.`;
 }
 
 if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabriaPasado instanceof HTMLButtonElement) {
   botonHabriaPasado.addEventListener('click', () => {
     const resultado = simulaQueHabriaPasado();
     muestraMensaje(resultado);
-    botonHabriaPasado.disabled = true;
+    cambiarEstadoBoton(botonHabriaPasado, true);
   });
 }
 
@@ -240,7 +235,5 @@ if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabria
 
 document.addEventListener("DOMContentLoaded", () => {
   muestraPuntuacion(puntuacion);
-  if (botonHabriaPasado !== null && botonHabriaPasado !== undefined && botonHabriaPasado instanceof HTMLButtonElement) {
-    botonHabriaPasado.disabled = true;
-  }
+  cambiarEstadoBoton(botonHabriaPasado, true);
 });
